@@ -267,6 +267,10 @@ def MallocOverflowSecurityChecker : Checker<"MallocOverflow">,
   HelpText<"Check for overflows in the arguments to malloc()">,
   DescFile<"MallocOverflowSecurityChecker.cpp">;
 
+def StrncatOverflowChecker : Checker<"StrncatOverflow">,
+  HelpText<"Check for overflows in the arguments to strncat()">,
+  DescFile<"StrncatOverflowChecker.cpp">;
+
 } // end "alpha.security"
 
 //===----------------------------------------------------------------------===//
