@@ -267,6 +267,10 @@ def MallocOverflowSecurityChecker : Checker<"MallocOverflow">,
   HelpText<"Check for overflows in the arguments to malloc()">,
   DescFile<"MallocOverflowSecurityChecker.cpp">;
 
+def UninitStrcatChecker : Checker<"UninitStrcat">,
+  HelpText<"Check for uninitialized memory as dest arguments to strn?cat()">,
+  DescFile<"UninitStrcatChecker.cpp">;
+
 def StrncatOverflowChecker : Checker<"StrncatOverflow">,
   HelpText<"Check for overflows in the arguments to strncat()">,
   DescFile<"StrncatOverflowChecker.cpp">;
