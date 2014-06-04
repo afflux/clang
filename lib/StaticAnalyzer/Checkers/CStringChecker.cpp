@@ -1344,6 +1344,37 @@ void CStringChecker::evalStrcpyCommon(CheckerContext &C, const CallExpr *CE,
   if (!state)
     return;
 
+  if (isAppending && Filter.CheckCStringNotNullTerm) {
+    if (const MemRegion* MR = DstVal.getAsRegion()) {
+      const SVal regionVal = state->getSVal(MR);
+      if (regionVal.isUndef()) {
+        if (const ExplodedNode *N = C.addTransition(state)) {
+          if (!BT_NotCString)
+            BT_NotCString.reset(new BuiltinBug(
+                  Filter.CheckNameCStringNotNullTerm, categories::UnixAPI,
+                  "Argument is not a null-terminated string."));
+
+          SmallString<120> buf;
+          llvm::raw_svector_ostream os(buf);
+
+          assert(CurrentFunctionDescription);
+          os << "destination argument to string concatenation function is ";
+
+          if (SummarizeRegion(os, C.getASTContext(), MR))
+            os << ", which is ";
+
+          os << " uninitialized";
+
+          // Generate a report for this bug.
+          BugReport *report = new BugReport(*BT_NotCString, os.str(), N);
+
+          report->addRange(Dst->getSourceRange());
+          C.emitReport(report);        
+        }
+      }
+    }
+  }
+
   // Get the string length of the source.
   SVal strLength = getCStringLength(C, state, srcExpr, srcVal);
 
